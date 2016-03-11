@@ -1,0 +1,315 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title MarionetteJS Introduction
+
+    link(rel='stylesheet', type='text/css', href='build/build.css')
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+    script(type="text/template" id="add-email")
+      div.input
+        input(name="email", type="email", id="email", placeholder="Enter your email address…")
+      a(href="javascript:;", id="submit") Submit email
+    script(type="text/template" id="no-emails")
+      div.no-emails
+        td No emails
+    script(type="text/template" id="email-element")
+      td(class="email", title="Email") <%= email %>
+        span(class="fa fa-star primary-email hidden" title="Email primario")
+        a(href="javascript:;" class="set-primary alternative-email hidden" title="Email alternativo")
+          span(class="fa fa-star-o")
+        a(href="javascript:;" class="email-remove hidden" title="Quitar email")
+          span(class="fa fa-trash-o")
+    script(type="text/template" id="email-list-template")
+      h1 Emails List Example
+      table
+        tbody(id="email-list")
+      br
+  body
+
+    article
+
+      section
+        h1(style="font-family: arial") Marionette
+        .avatars
+          img.avatar(src="images/mn_logo.png")
+      section
+        h1 Let's talk about...
+        ul
+          li jQuery
+          li Underscore
+          li BackboneJS
+      section
+        h1 Marionette components
+        ul
+          li Application (Mn)
+          li Models & Collections (BB)
+          li Views (Mn & BB)
+          li Routes (BB)
+          li Regions (Mn)
+          li Controller
+      section
+        h1 Application
+        p The Application is a container for the rest of your code.
+        p It is recommended that every Marionette app have at least one instance of Application.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.application.html") Docs.
+      section
+        ul
+          li A start method to kick off your application.
+          li A namespace to keep things off of the window.
+          li Integration with the Marionette Inspector.
+      section
+        pre
+          code.language-javascript.
+            // Create our Application
+            var app = new Mn.Application();
+
+            // Start history when our application is ready
+            app.on('start', function() {
+              Backbone.history.start();
+            });
+
+            // Load some initial data, and then start our application
+            loadInitialData().then(app.start);
+      section
+        h1 Models
+        p Contains the interactive data as well as a large part of the logic surrounding it: conversions, validations, computed properties, and access control.
+        br
+        a(href="http://backbonejs.org/#Model") Doc
+      section
+        pre.language-javascript(style='font-size: 15px')
+          code.
+            var EmailElement = Backbone.Model.extend({
+              defaults: {
+                'primary': false,
+                'valid': false,
+                'emailSent': false,
+              }
+            });
+
+            var email = new EmailElement({
+              'email': 'foo@bar.com'
+              'valid': true
+            });
+      section
+        h1 Collections
+        p Collections are ordered sets of models.
+        p Supports underscore methods.
+        br
+        a(href="http://backbonejs.org/#Collection") Doc
+      section
+        pre.language-javascript(style='font-size: 14px')
+          code.
+            var EmailCollection = Backbone.Collection.extend({
+                url: URL_ALTERNATIVE_EMAILS,
+                // raw attributes objects will
+                // be converted into a model of EmailElement
+                model: EmailElement,
+                comparator: function(item) {
+                  // ordering elements
+                }
+            });
+
+            var Emails = new EmailCollection([
+              {email: 'foo@foo.com'},
+              {email: 'bar@bar.com'},
+            ]);
+      section
+        h1 Views
+        p Marionette has a base <em>'Marionette.View'</em> class that other views extend from.
+        p This base view provides some common and core functionality for other views to take advantage of.
+        br
+        p Note: The Marionette.View class is not intended to be used directly.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.view.html") Doc
+      section
+        h2 ItemView
+        p An ItemView is a view that represents a single item.
+        p That item may be a Backbone.Model or may be a Backbone.Collection.
+        p Whichever it is though, it will be treated as a single item.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.itemview.html") Doc
+      section
+        pre.language-javascript(style='font-size: 15px')
+          code.
+            var EmailView = Marionette.ItemView.extend({
+              tagName: "li",  // Optional, wraping element
+              template: '#email-element',  // Optional
+              el : "<tr>",  // Optional
+              initialize: function() {
+                // ...
+              },
+              ui: {
+                "cat": ".dog",
+                "submit": "#submit"
+              },
+              events: {
+                "click @ui.cat": "bark" //is the same as "click .dog":
+                "click @ui.submit": "onSubmit"
+              }
+            });
+
+      section
+        pre.language-javascript(style='font-size: 15px')
+          code.
+            var EmailView = Marionette.ItemView.extend({
+              template: '#foo-template',
+              onShow: function() {
+                // react to when a view has been shown
+              },
+              onRender: function() {
+                // manipulate the `el` here. it's already
+                // been rendered, and is full of the view's
+                // HTML, ready to go.
+              }
+              onBeforeRender: function() {
+                // ...
+              },
+              onDestroy: function(arg1, arg2) {
+                // custom cleanup or destroying code, here
+              }
+            });
+      section
+        h2 CollectionView
+        ul
+          li Loop through all of the models in the specified collection
+          li Render each of them using a specified childView
+          li Append the results of the child view's el to the collection view's el.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.collectionview.html") Doc
+      section
+        pre.language-javascript(style='font-size: 18px')
+          code.
+            var EmailView = Marionette.ItemView.extend({
+              template: '#foo-template'
+            });
+
+            var EmailsView = Marionette.CollectionView.extend({
+              childView: EmailView
+            });
+
+            var emailsView = new EmailsView({
+              collection: new Backbone.Collection()
+            });
+      section
+        h2 CompositeView
+        p A CompositeView extends from CollectionView to be used as a composite view for scenarios where it should represent both a branch and leaf in a tree structure, or for scenarios where a collection needs to be rendered within a wrapper template.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.compositeview.html") Doc
+      section
+        pre.language-javascript(style='font-size: 16px')
+          code.
+            var EmailList = Backbone.Marionette.CompositeView.extend({
+              template: '#email-list-template',
+              childView: Views.EmailElement,
+              ui: {
+                  error: '.email-error'
+              },
+              initialize: function() {
+                // ..
+                // Could do something like:
+                // this.ui.error.remove();
+              }
+              childViewContainer: "#email-list",
+              onRender: function () {
+                  $('[data-toggle="tooltip"]').tooltip();
+              }
+            });
+      section
+        h1 LayoutView
+        p A LayoutView is a hybrid of an ItemView and a collection of Region objects.
+        p They are ideal for rendering application layouts with multiple sub-regions managed by specified region managers.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.layoutview.html") Doc
+      section
+        pre.language-markup(style='font-size: 13px')
+          code.
+            &lt;script id="layout-view-template" type="text/template"&gt;
+              &lt;div&gt;
+                &lt;div id="menu"&gt;...&lt;/div&gt;
+                &lt;div id="content"&gt;...&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/script&gt;
+          br
+          br
+          code.language-javascript(style='font-size: 13px').
+            var AppLayoutView = Marionette.LayoutView.extend({
+              template: "#layout-view-template",
+              el: "#layout"
+              regions: {
+                menu: "#menu",
+                content: "#content"
+              }
+            });
+            var layoutView = new AppLayoutView();
+            layoutView.render();
+            layoutView.content.show(emailsView);
+      section
+        h1 Application communication
+        p Backbone.Events: implementation of the publish-subscribe pattern.
+        p Pub-sub most common event pattern in client-side applications.
+        p It is incredibly useful.
+        p It should also be familiar to web developers in particular, because the DOM relies heavily on pub-sub.
+        br
+        a(href="http://marionettejs.com/docs/v2.4.3/marionette.application.html#the-application-channel") Docs.
+      section
+        h1 Backbone.Radio.
+        ul
+          li Requests, an implementation of the request-reply pattern. Request-reply should also be familiar to web developers, as it's the messaging pattern that backs HTTP communications.
+          li Channels: explicit namespaces to your communications.
+        br
+        a(href="https://github.com/marionettejs/backbone.radio") Docs.
+      section
+        pre.language-javascript(style='font-size: 18px')
+          code.
+            var myChannel = Backbone.Radio.channel('my-chan');
+            myChannel.reply('default', function(requestName) {
+              console.log('No reply exists for this request: ' + requestName);
+            });
+
+            // This will be handled by the default request
+            myChannel.request('someUnhandledRequest');
+
+            myChannel.request('requestOne requestTwo');
+            myChannel.reply({
+              'some:request': myCallback,
+              'some:other:request': someOtherCallback
+            }, context);
+      section
+        pre.language-javascript(style='font-size: 18px')
+          code.
+            var payload = {};
+            Radio.channel('my-chan').trigger('EmailViews:click:button', payload);
+            Radio.channel('my-chan').on('EmailViews:click:button', function(payload) {
+              // do something!!
+            });
+      section
+        h1 Directory structure
+        .avatars
+          img.avatar(src="images/folders.jpg")
+      section
+        h1 Best practices and recommendations
+        ul
+          li Read the docs!!!
+          li DOM manipulation should be hidden in _functions which should then be called in the onRender.
+          li Read about behaviours and use them.
+          li Make use of ui in the views.
+          li Comment as much as u can.
+          li Use ESLint or JShint.
+      section
+        div(id="app-layout")
+          div(id="content")
+          div(id="form")
+      section.emphatic-text(data-bespoke-backdrop='emphatic')
+        h1 Applause
+        img(src="images/ob.gif")
+
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.1/backbone-min.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/backbone.marionette/2.4.3/backbone.marionette.js')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/backbone.radio/1.0.2/backbone.radio.js')
+
+    script(src='build/build.js')
