@@ -22,7 +22,7 @@
     "gulp-connect": "^5.7.0",
     "gulp-csso": "^0.2.9",
     "gulp-jade": "^1.1.0",
-    "gulp-plumber": "^0.6.3",
+    "gulp-plumber": "^1.2.1",
     "gulp-rename": "^1.2.0",
     "gulp-stylus": "^2.7.0",
     "gulp-uglify": "^0.3.1",
