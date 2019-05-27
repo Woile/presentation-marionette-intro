@@ -15,7 +15,7 @@
     "bespoke-touch": "^1.0.0",
     "debowerify": "^1.5.0",
     "del": "^4.1.1",
-    "gh-pages": "^0.2.0",
+    "gh-pages": "^2.0.1",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "6.1.0",
     "gulp-browserify": "^0.5.0",
