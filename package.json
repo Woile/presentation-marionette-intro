@@ -28,7 +28,7 @@
     "gulp-uglify": "^3.0.2",
     "gulp-util": "^3.0.8",
     "insert-css": "^2.0.0",
-    "opn": "^0.1.2",
+    "opn": "^6.0.0",
     "through": "^2.3.4"
   },
   "engines": {
